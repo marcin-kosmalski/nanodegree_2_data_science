@@ -13,7 +13,7 @@ print no_rain_days_data.describe()
 print rain_days_data.describe()
 
 plt.hist([rain_days_data.ENTRIESn_hourly,no_rain_days_data.ENTRIESn_hourly] ,stacked=True, fill=True,color=['crimson', 'burlywood' ],
-                            label=['Rain', 'No rain' ],bins=160)
+                            label=['Rain', 'No rain' ],bins=20)
 plt.title("The ridership on rainy and not rainy days")
 plt.xlabel('ENTRIESn hourly')
 plt.legend()
