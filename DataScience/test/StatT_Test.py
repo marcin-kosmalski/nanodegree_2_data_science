@@ -13,9 +13,11 @@ noRainyData=data[data['rain']==0]['ENTRIESn_hourly']
 print rainyData.count()
 print noRainyData.count()
 
-print rainyData.describe()
-print noRainyData.describe()
+#print rainyData.describe()
+#print noRainyData.describe()
 
 
 print scipy.stats.mannwhitneyu(noRainyData,rainyData)
+
+print scipy.stats.ttest_ind(rainyData,noRainyData , equal_var = False)
 

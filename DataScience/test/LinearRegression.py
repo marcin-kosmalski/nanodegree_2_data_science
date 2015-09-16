@@ -4,6 +4,9 @@ from pandas import *
 import matplotlib.pyplot as plt
 import pandasql
 from sklearn.linear_model import SGDRegressor
+import math
+from scipy import stats
+
 
 
 def normalize_features(features):
@@ -50,13 +53,15 @@ def predictions(dataframe):
     #  u'meanpressurei', u'meantempi', u'meanwspdi', u'weather_lat',
     #  u'weather_lon'],
 
-    features = dataframe[['rain','meantempi','hour','weekday']]
+    features = dataframe[['rain','hour','weekday','meantempi']]
     dummy_units = pandas.get_dummies(dataframe['UNIT'], prefix='unit')
-    print len(dummy_units.columns)
+    #print len(dummy_units.columns)
     features = features.join(dummy_units)
     dummy_units2 = pandas.get_dummies(dataframe['conds'], prefix='conds')
     features = features.join(dummy_units2)
-    print len(dummy_units2.columns)
+    #print len(dummy_units2.columns)
+    
+    print features.columns
     
     values = dataframe['ENTRIESn_hourly']
     features_array = features.values
@@ -68,9 +73,9 @@ def predictions(dataframe):
     
     intercept, params = recover_params(means, std_devs, norm_intercept, norm_params)
     
-    print intercept
-    print params
-    print len(params)
+   # print intercept
+   # print params
+   # print len(params)
     
     predictions = intercept + np.dot(features_array, params)
     
@@ -88,13 +93,31 @@ def compute_r_squared(data, predictions):
     
     return 1 - np.sum(top) / np.sum(down)
 
+def calcResiduals(data, predictions):
+    y = data.tolist()
+    residuals = []
+    for i in range(0, len(y)):
+       # residuals.append(math.sqrt((predictions[i]-y[i])*(predictions[i]-y[i])))
+        residuals.append(predictions[i]-y[i])
+       
+    plt.hist(residuals,histtype='bar', stacked=True, fill=True,bins=500)   
+    plt.title("Distribution of residuals")
+    plt.xlabel('Residuals')
+        
+    #stats.probplot(residuals, plot=plt)  
+    plt.show()   
+    
+
 
 data = pandas.read_csv("turnstile_weather_v2.csv")
 
-print data.columns
+#print data.columns
 pred=predictions(data)
 
 
-print "Prediction made: "+str(len(pred))
+#print "Prediction made: "+str(len(pred))
 print compute_r_squared(data['ENTRIESn_hourly'], pred)
+#calcResiduals(data['ENTRIESn_hourly'], pred)
+
+
 
