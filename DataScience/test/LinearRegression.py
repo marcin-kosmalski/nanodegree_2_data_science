@@ -46,20 +46,20 @@ def linear_regression(features, values):
 
 def predictions(dataframe):
 
-    #Index([u'UNIT', u'DATEn', u'TIMEn', u'ENTRIESn', u'EXITSn', u'ENTRIESn_hourly',
+    # Index([u'UNIT', u'DATEn', u'TIMEn', u'ENTRIESn', u'EXITSn', u'ENTRIESn_hourly',
     #  u'EXITSn_hourly', u'datetime', u'hour', u'day_week', u'weekday',
     #  u'station', u'latitude', u'longitude', u'conds', u'fog', u'precipi',
     #  u'pressurei', u'rain', u'tempi', u'wspdi', u'meanprecipi',
     #  u'meanpressurei', u'meantempi', u'meanwspdi', u'weather_lat',
     #  u'weather_lon'],
 
-    features = dataframe[['rain','hour','weekday','meantempi']]
+    features = dataframe[['rain', 'hour', 'weekday', 'meantempi']]
     dummy_units = pandas.get_dummies(dataframe['UNIT'], prefix='unit')
-    #print len(dummy_units.columns)
+    # print len(dummy_units.columns)
     features = features.join(dummy_units)
     dummy_units2 = pandas.get_dummies(dataframe['conds'], prefix='conds')
     features = features.join(dummy_units2)
-    #print len(dummy_units2.columns)
+    # print len(dummy_units2.columns)
     
     print features.columns
     
@@ -98,26 +98,38 @@ def calcResiduals(data, predictions):
     residuals = []
     for i in range(0, len(y)):
        # residuals.append(math.sqrt((predictions[i]-y[i])*(predictions[i]-y[i])))
-        residuals.append(predictions[i]-y[i])
+        residuals.append(predictions[i] - y[i])
        
-    plt.hist(residuals,histtype='bar', stacked=True, fill=True,bins=500)   
+    plt.hist(residuals, histtype='bar', stacked=True, fill=True, bins=500)   
     plt.title("Distribution of residuals")
     plt.xlabel('Residuals')
         
-    #stats.probplot(residuals, plot=plt)  
+    # stats.probplot(residuals, plot=plt)  
+    plt.show()   
+    
+def showProbplot(data, predictions):
+    y = data.tolist()
+    residuals = []
+    for i in range(0, len(y)):
+       # residuals.append(math.sqrt((predictions[i]-y[i])*(predictions[i]-y[i])))
+        residuals.append(predictions[i] - y[i])
+    stats.probplot(residuals, plot=plt)
+    
     plt.show()   
     
 
 
 data = pandas.read_csv("turnstile_weather_v2.csv")
 
-#print data.columns
-pred=predictions(data)
+# print data.columns
+pred = predictions(data)
 
 
-#print "Prediction made: "+str(len(pred))
+# print "Prediction made: "+str(len(pred))
 print compute_r_squared(data['ENTRIESn_hourly'], pred)
+
 #calcResiduals(data['ENTRIESn_hourly'], pred)
+showProbplot(data['ENTRIESn_hourly'], pred)
 
 
 
